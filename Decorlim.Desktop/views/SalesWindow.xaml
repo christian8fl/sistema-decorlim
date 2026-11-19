@@ -1,0 +1,159 @@
+<Window x:Class="Decorlim.Desktop.SalesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DECORLIM - Punto de Venta POS (Sucursal Apuela)"
+        Height="640"
+        Width="1060"
+        MinHeight="540"
+        MinWidth="860"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="#F8FAFC"
+          Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="98"/>
+        </Grid.RowDefinitions>
+
+        <!-- Fila 0: Barra Superior del Escáner USB y Modo de Precio -->
+        <Border Grid.Row="0"
+                Background="White"
+                BorderBrush="#E2E8F0"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="12">
+            <DockPanel LastChildFill="True">
+                <TextBlock Text="🔍 Código / Escáner:"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                           Margin="0,0,10,0"
+                           Foreground="#1E293B"
+                           FontSize="14"/>
+
+                <CheckBox x:Name="chkMayorista"
+                          Content="Precio Mayorista"
+                          DockPanel.Dock="Right"
+                          VerticalAlignment="Center"
+                          Margin="15,0,0,0"
+                          FontWeight="SemiBold"
+                          Foreground="#0F172A"
+                          FontSize="13"/>
+
+                <TextBox x:Name="txtCodigoBarras"
+                         Height="38"
+                         FontSize="16"
+                         FontWeight="SemiBold"
+                         VerticalContentAlignment="Center"
+                         Padding="8,0"
+                         KeyDown="TxtCodigoBarras_KeyDown"
+                         ToolTip="Escanee el código de barras o escriba el código y presione Enter"/>
+            </DockPanel>
+        </Border>
+
+        <!-- Fila 1: Tabla del Carrito de Compras -->
+        <Border Grid.Row="1"
+                Background="White"
+                BorderBrush="#E2E8F0"
+                BorderThickness="1"
+                CornerRadius="8"
+                Margin="0,12,0,10"
+                Padding="4">
+            <DataGrid x:Name="dgCarrito"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="True"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      Background="White"
+                      BorderThickness="0"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#E2E8F0"
+                      RowHeight="34"
+                      FontSize="13">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#F1F5F9"/>
+                        <Setter Property="Foreground" Value="#334155"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="8,6"/>
+                        <Setter Property="BorderBrush" Value="#CBD5E1"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Código" Binding="{Binding CodigoBarras}" Width="150"/>
+                    <DataGridTextColumn Header="Producto" Binding="{Binding Nombre}" Width="*"/>
+                    <DataGridTextColumn Header="Presentación" Binding="{Binding Presentacion}" Width="130"/>
+                    <DataGridTextColumn Header="Stock" Binding="{Binding StockDisponible}" Width="75"/>
+                    <DataGridTextColumn Header="Precio Unit." Binding="{Binding PrecioUnitario, StringFormat=C2}" Width="110"/>
+                    <DataGridTextColumn Header="Cant." Binding="{Binding Cantidad}" Width="75"/>
+                    <DataGridTextColumn Header="Subtotal" Binding="{Binding Subtotal, StringFormat=C2}" Width="115"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Fila 2: Panel Inferior de Totales y Cobro -->
+        <Border Grid.Row="2"
+                Background="#1E293B"
+                CornerRadius="8"
+                Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="260"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0"
+                            VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="TOTAL A PAGAR:"
+                                   Foreground="#94A3B8"
+                                   FontSize="11"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock x:Name="txtResumenItems"
+                                   Text="  |  0 ítems (0 und.)"
+                                   Foreground="#CBD5E1"
+                                   FontSize="11"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <TextBlock x:Name="txtTotalPagar"
+                               Text="$0.00"
+                               Foreground="#38BDF8"
+                               FontSize="28"
+                               FontWeight="Bold"/>
+                    <TextBlock x:Name="lblEstadoApi"
+                               Text="API: http://localhost:5041/api/productos"
+                               Foreground="#34D399"
+                               FontSize="11"/>
+                </StackPanel>
+
+                <Button x:Name="btnLimpiar"
+                        Grid.Column="1"
+                        Content="LIMPIAR"
+                        Width="105"
+                        Height="46"
+                        Background="#475569"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        FontSize="13"
+                        Cursor="Hand"
+                        Margin="0,0,12,0"
+                        Click="BtnLimpiar_Click"/>
+
+                <Button x:Name="btnCobrar"
+                        Grid.Column="2"
+                        Content="COBRAR E IMPRIMIR [F4]"
+                        Height="46"
+                        Background="#10B981"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        FontSize="14"
+                        Cursor="Hand"
+                        Click="BtnCobrar_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

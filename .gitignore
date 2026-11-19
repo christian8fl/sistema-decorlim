@@ -1,0 +1,12 @@
+﻿[Bb]in/
+[Oo]bj/
+.vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.user
+*.suo
+*.cache
+ventas_pendientes.json
+*.log
