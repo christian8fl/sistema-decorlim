@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Decorlim.API.Models
 {
@@ -30,5 +31,9 @@ namespace Decorlim.API.Models
 
         [Column("subtotal_linea", TypeName = "decimal(12,2)")]
         public decimal SubtotalLinea { get; set; }
+
+        [ForeignKey(nameof(IdVenta))]
+        [JsonIgnore]
+        public Venta? Venta { get; set; }
     }
 }

@@ -17,5 +17,26 @@ namespace Decorlim.API.Data
         public DbSet<DetalleVenta> DetalleVentas { get; set; }
         public DbSet<Pago> Pagos { get; set; }
         public DbSet<Comprobante> Comprobantes { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<DetalleVenta>(entity =>
+            {
+                entity.HasOne(d => d.Venta)
+                      .WithMany(v => v.Detalles)
+                      .HasForeignKey(d => d.IdVenta)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Pago>(entity =>
+            {
+                entity.HasOne(p => p.Venta)
+                      .WithMany(v => v.Pagos)
+                      .HasForeignKey(p => p.IdVenta)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+        }
     }
 }

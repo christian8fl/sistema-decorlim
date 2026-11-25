@@ -1,43 +1,80 @@
-﻿<Window x:Class="Decorlim.Desktop.MainWindow"
+﻿<Window x:Class="Decorlim.Desktop.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="DECORLIM POS v1.0 - Sucursal Apuela" Height="450" Width="750"
-        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
-    <Grid Background="#F4F6F9">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="380"/>
-        </Grid.ColumnDefinitions>
+        Title="DECORLIM POS - Iniciar Sesión"
+        Width="440" Height="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#F1F5F9">
+    <Border Margin="24" Background="White" CornerRadius="12" Padding="28" BorderBrush="#E2E8F0" BorderThickness="1">
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="DECORLIM"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Foreground="#0F172A"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Text="Sistema de Ventas, Inventario y Facturación"
+                       FontSize="12.5"
+                       Foreground="#64748B"
+                       HorizontalAlignment="Center"
+                       Margin="0,4,0,22"/>
 
-        <!-- Panel Izquierdo: Branding Sucursal Apuela -->
-        <Border Background="#1E293B" Padding="30">
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="DECORLIM" Foreground="#38BDF8" FontSize="28" FontWeight="Bold"/>
-                <TextBlock Text="SISTEMA DE GESTIÓN" Foreground="White" FontSize="14" FontWeight="SemiBold" Margin="0,5,0,15"/>
-                <TextBlock Text="Control de inventarios, facturación offline y ventas con códigos de barras para pinturas en Apuela."
-                           Foreground="#94A3B8" TextWrapping="Wrap" FontSize="12" LineHeight="18"/>
-                <Border Background="#334155" Padding="12" CornerRadius="6" Margin="0,25,0,0">
-                    <TextBlock Text="Modo: Offline-First&#x0a;Base de Datos Local: ACTIVA"
-                               Foreground="#34D399" FontSize="11" LineHeight="16"/>
-                </Border>
-            </StackPanel>
-        </Border>
+            <TextBlock Text="Usuario" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,6"/>
+            <TextBox x:Name="TxtUsuario"
+                     Height="38"
+                     Padding="10,6"
+                     FontSize="14"
+                     BorderBrush="#CBD5E1"
+                     BorderThickness="1"
+                     Text="admin"/>
 
-        <!-- Panel Derecho: Formulario de Login -->
-        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="35">
-            <TextBlock Text="Iniciar Sesión" FontSize="22" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,22"/>
+            <TextBlock Text="Contraseña" FontWeight="SemiBold" Foreground="#334155" Margin="0,14,0,6"/>
+            <PasswordBox x:Name="TxtPassword"
+                         Height="38"
+                         Padding="10,6"
+                         FontSize="14"
+                         BorderBrush="#CBD5E1"
+                         BorderThickness="1"/>
 
-            <TextBlock Text="Usuario (Login):" FontSize="12" Foreground="#475569" FontWeight="SemiBold" Margin="0,0,0,6"/>
-            <TextBox x:Name="txtUsuario" Height="36" Padding="8,0" FontSize="14"
-                     VerticalContentAlignment="Center" Margin="0,0,0,16"/>
+            <TextBlock x:Name="LblError"
+                       Foreground="#DC2626"
+                       FontSize="12"
+                       TextWrapping="Wrap"
+                       Margin="0,10,0,0"/>
 
-            <TextBlock Text="Contraseña:" FontSize="12" Foreground="#475569" FontWeight="SemiBold" Margin="0,0,0,6"/>
-            <PasswordBox x:Name="txtPassword" Height="36" Padding="8,0" FontSize="14"
-                         VerticalContentAlignment="Center" Margin="0,0,0,24"/>
+            <Button x:Name="BtnIngresar"
+                    Content="INGRESAR AL SISTEMA"
+                    Height="42"
+                    Margin="0,18,0,0"
+                    Background="#2563EB"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    FontSize="13.5"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    IsDefault="True"
+                    Click="BtnIngresar_Click"/>
 
-            <Button x:Name="btnIngresar" Content="INGRESAR AL SISTEMA [Enter]" Height="42"
-                    Background="#0284C7" Foreground="White" FontWeight="Bold" FontSize="13"
-                    Cursor="Hand" Click="BtnIngresar_Click"/>
+            <Border Background="#F8FAFC" CornerRadius="8" Padding="10" Margin="0,18,0,0" BorderBrush="#E2E8F0" BorderThickness="1">
+                <StackPanel>
+                    <TextBlock Text="Acceso rápido (pruebas / sin internet):" FontSize="11" FontWeight="SemiBold" Foreground="#475569"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <Button Content="Perfil Admin"
+                                Padding="10,4"
+                                Margin="0,0,8,0"
+                                Background="#E2E8F0"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="BtnRellenarAdmin_Click"/>
+                        <Button Content="Perfil Vendedor"
+                                Padding="10,4"
+                                Background="#E2E8F0"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="BtnRellenarVendedor_Click"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </StackPanel>
-    </Grid>
+    </Border>
 </Window>

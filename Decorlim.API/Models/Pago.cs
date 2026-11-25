@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Decorlim.API.Models
 {
@@ -22,5 +23,9 @@ namespace Decorlim.API.Models
 
         [Column("referencia")]
         public string? Referencia { get; set; }
+
+        [ForeignKey(nameof(IdVenta))]
+        [JsonIgnore]
+        public Venta? Venta { get; set; }
     }
 }

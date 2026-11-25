@@ -1,76 +1,95 @@
-﻿using System.Windows;
-using System.Windows.Input;
+﻿using System.Threading.Tasks;
+using System.Windows;
+using Decorlim.Desktop.Services;
+using Decorlim.Desktop.ViewModels;
 
-namespace Decorlim.Desktop
+namespace Decorlim.Desktop.Views
 {
     public partial class MainWindow : Window
     {
+        private readonly ApiService _apiService = new();
+
         public MainWindow()
         {
             InitializeComponent();
-            Loaded += (_, _) => txtUsuario.Focus();
-            txtUsuario.KeyDown += CampoLogin_KeyDown;
-            txtPassword.KeyDown += CampoLogin_KeyDown;
+            TxtUsuario.Focus();
         }
 
-        private void CampoLogin_KeyDown(object sender, KeyEventArgs e)
+        private void BtnRellenarAdmin_Click(object sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                e.Handled = true;
-                BtnIngresar_Click(btnIngresar, new RoutedEventArgs());
-            }
+            TxtUsuario.Text = "admin";
+            TxtPassword.Password = "1234";
+            LblError.Text = string.Empty;
         }
 
-        private void BtnIngresar_Click(object sender, RoutedEventArgs e)
+        private void BtnRellenarVendedor_Click(object sender, RoutedEventArgs e)
         {
-            string usuario = txtUsuario.Text.Trim();
-            string password = txtPassword.Password;
+            TxtUsuario.Text = "cflores_vendedor";
+            TxtPassword.Password = "1234";
+            LblError.Text = string.Empty;
+        }
+
+        private async void BtnIngresar_Click(object sender, RoutedEventArgs e)
+        {
+            string usuario = TxtUsuario.Text.Trim();
+            string password = TxtPassword.Password;
 
             if (string.IsNullOrWhiteSpace(usuario))
             {
-                MessageBox.Show(
-                    "Ingrese su nombre de usuario.",
-                    "Campo Requerido",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-                txtUsuario.Focus();
+                LblError.Text = "Ingrese su nombre de usuario.";
+                TxtUsuario.Focus();
                 return;
             }
 
-            if (string.IsNullOrEmpty(password))
+            if (string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show(
-                    "Ingrese su contraseña.",
-                    "Campo Requerido",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-                txtPassword.Focus();
+                LblError.Text = "Ingrese su contraseña.";
+                TxtPassword.Focus();
                 return;
             }
 
-            string? rol = usuario.ToLowerInvariant() switch
+            BtnIngresar.IsEnabled = false;
+            LblError.Text = "Verificando acceso...";
+
+            var resultado = await _apiService.LoginAsync(usuario, password);
+
+            BtnIngresar.IsEnabled = true;
+
+            if (!resultado.Ok || resultado.Sesion == null)
             {
-                "mtorres_admin" => "Administrador",
-                "cflores_vendedor" => "Vendedor",
-                _ => null
+                LblError.Text = resultado.Mensaje;
+                return;
+            }
+
+            LblError.Text = string.Empty;
+
+            var vm = new MainViewModel(_apiService)
+            {
+                UsuarioActual = resultado.Sesion,
+                EstadoBarra = resultado.Mensaje
             };
+            vm.RefrescarEstadoOffline();
 
-            if (rol == null)
-            {
-                MessageBox.Show(
-                    "Usuario o contraseña incorrectos.",
-                    "Error de Autenticación",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-                txtPassword.Clear();
-                txtPassword.Focus();
-                return;
-            }
-
-            SalesWindow salesWindow = new SalesWindow(usuario, rol);
-            salesWindow.Show();
+            var shell = new ShellWindow(vm);
+            shell.Show();
             Close();
+
+            // Sincronizar en segundo plano sin demorar la apertura de ShellWindow
+            if (_apiService.ApiEnLinea && _apiService.ContarVentasPendientes() > 0)
+            {
+                _ = Task.Run(async () =>
+                {
+                    int synced = await _apiService.SincronizarVentasPendientesAsync();
+                    await Dispatcher.InvokeAsync(() =>
+                    {
+                        vm.RefrescarEstadoOffline();
+                        if (synced > 0)
+                        {
+                            vm.EstadoBarra = $"Se sincronizaron {synced} venta(s) pendientes al iniciar sesión.";
+                        }
+                    });
+                });
+            }
         }
     }
 }

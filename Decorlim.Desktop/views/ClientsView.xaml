@@ -1,0 +1,117 @@
+<UserControl x:Class="Decorlim.Desktop.Views.ClientsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F8FAFC">
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*"/>
+            <ColumnDefinition Width="14"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Listado de Clientes -->
+        <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="14" BorderBrush="#E2E8F0" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Directorio de Clientes" FontSize="18" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,10"/>
+
+                <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="TxtBuscarCliente" Grid.Column="0" Height="34" Padding="10,5" TextChanged="TxtBuscarCliente_TextChanged"/>
+                    <Button Grid.Column="2" Content="🔄 Recargar" Height="34" Padding="12,0" Background="#E2E8F0" BorderThickness="0" Cursor="Hand" Click="BtnRecargar_Click"/>
+                </Grid>
+
+                <DataGrid x:Name="GridClientes"
+                          Grid.Row="2"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          SelectionChanged="GridClientes_SelectionChanged"
+                          HeadersVisibility="Column"
+                          BorderBrush="#E2E8F0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Tipo" Binding="{Binding TipoIdentificacion}" Width="115"/>
+                        <DataGridTextColumn Header="Identificación" Binding="{Binding Identificacion}" Width="125"/>
+                        <DataGridTextColumn Header="Razón Social / Nombre" Binding="{Binding RazonSocial}" Width="*"/>
+                        <DataGridTextColumn Header="Correo" Binding="{Binding Correo}" Width="155"/>
+                        <DataGridTextColumn Header="Celular" Binding="{Binding Celular}" Width="100"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!-- Formulario de Cliente -->
+        <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="16" BorderBrush="#E2E8F0" BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock x:Name="TxtTituloCliente" Text="Nuevo Cliente" FontSize="17" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,12"/>
+
+                    <TextBlock Text="Tipo de Identificación" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                    <ComboBox x:Name="CmbTipoIdent" Height="32" Margin="0,3,0,8" SelectedIndex="0">
+                        <ComboBoxItem Content="CEDULA"/>
+                        <ComboBoxItem Content="RUC"/>
+                        <ComboBoxItem Content="PASAPORTE"/>
+                        <ComboBoxItem Content="CONSUMIDOR_FINAL"/>
+                    </ComboBox>
+
+                    <TextBlock Text="Identificación (RUC / Cédula) *" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                    <TextBox x:Name="TxtIdentificacion" Height="32" Padding="8,4" Margin="0,3,0,8"/>
+
+                    <TextBlock Text="Razón Social / Nombres y Apellidos *" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                    <TextBox x:Name="TxtRazonSocial" Height="32" Padding="8,4" Margin="0,3,0,8"/>
+
+                    <TextBlock Text="Correo Electrónico (Envío de Factura SRI)" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                    <TextBox x:Name="TxtCorreo" Height="32" Padding="8,4" Margin="0,3,0,8"/>
+
+                    <TextBlock Text="Dirección" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                    <TextBox x:Name="TxtDireccion" Height="32" Padding="8,4" Margin="0,3,0,8"/>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Teléfono Fijo" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                            <TextBox x:Name="TxtTelefono" Height="32" Padding="8,4" Margin="0,3,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Celular" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                            <TextBox x:Name="TxtCelular" Height="32" Padding="8,4" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Button Content="➕ Limpiar / Nuevo Cliente"
+                            Height="34"
+                            Margin="0,0,0,8"
+                            Background="#0284C7"
+                            Foreground="White"
+                            FontWeight="SemiBold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="BtnNuevo_Click"/>
+
+                    <Button x:Name="BtnGuardarCliente"
+                            Content="💾 Guardar Cliente"
+                            Height="40"
+                            Background="#16A34A"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="BtnGuardar_Click"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,257 @@
+<UserControl x:Class="Decorlim.Desktop.Views.SalesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F8FAFC">
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.65*"/>
+            <ColumnDefinition Width="14"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Panel Izquierdo: Escáner / Búsqueda y Carrito -->
+        <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="14" BorderBrush="#E2E8F0" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                    <TextBlock Text="Punto de Venta (POS)" FontSize="18" FontWeight="Bold" Foreground="#0F172A"/>
+                    <TextBlock Text="Atajos: [F2] Buscar/Escanear  |  [F4] Tarifa  |  [F6] Cliente  |  [F9] Cobrar  |  [Esc] Cancelar"
+                               FontSize="11"
+                               Foreground="#64748B"/>
+                </StackPanel>
+
+                <!-- Barra de Búsqueda / Escáner -->
+                <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="TxtBuscarProducto"
+                             Grid.Column="0"
+                             Height="36"
+                             Padding="10,6"
+                             FontSize="13.5"
+                             KeyDown="TxtBuscarProducto_KeyDown"/>
+
+                    <ComboBox x:Name="CmbTarifa"
+                              Grid.Column="2"
+                              Width="125"
+                              Height="36"
+                              SelectedIndex="0"
+                              SelectionChanged="CmbTarifa_SelectionChanged">
+                        <ComboBoxItem Content="Minorista"/>
+                        <ComboBoxItem Content="Mayorista"/>
+                    </ComboBox>
+
+                    <Button Grid.Column="4"
+                            Content="+ Agregar"
+                            Height="36"
+                            Padding="14,0"
+                            Background="#2563EB"
+                            Foreground="White"
+                            FontWeight="SemiBold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="BtnAgregarSeleccionado_Click"/>
+                </Grid>
+
+                <!-- Lista rápida de coincidencias + Carrito -->
+                <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="130"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DataGrid x:Name="GridResultados"
+                              Grid.Row="0"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              MouseDoubleClick="GridResultados_MouseDoubleClick"
+                              HeadersVisibility="Column"
+                              BorderBrush="#E2E8F0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Código" Binding="{Binding CodigoBarras}" Width="110"/>
+                            <DataGridTextColumn Header="Producto" Binding="{Binding Nombre}" Width="*"/>
+                            <DataGridTextColumn Header="Presentación" Binding="{Binding Presentacion}" Width="105"/>
+                            <DataGridTextColumn Header="Stock" Binding="{Binding StockActual}" Width="65"/>
+                            <DataGridTextColumn Header="PVP" Binding="{Binding PrecioMinorista, StringFormat=C2}" Width="75"/>
+                            <DataGridTextColumn Header="Mayor." Binding="{Binding PrecioMayorista, StringFormat=C2}" Width="75"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <DataGrid x:Name="GridCarrito"
+                              Grid.Row="2"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              HeadersVisibility="Column"
+                              BorderBrush="#CBD5E1">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Producto" Binding="{Binding Nombre}" IsReadOnly="True" Width="*"/>
+                            <DataGridTextColumn Header="Cant." Binding="{Binding Cantidad, UpdateSourceTrigger=PropertyChanged}" Width="65"/>
+                            <DataGridTextColumn Header="P. Unit." Binding="{Binding PrecioUnitario, StringFormat=C2}" IsReadOnly="True" Width="80"/>
+                            <DataGridTextColumn Header="Desc." Binding="{Binding Descuento, UpdateSourceTrigger=PropertyChanged}" Width="65"/>
+                            <DataGridTextColumn Header="Subtotal" Binding="{Binding Subtotal, StringFormat=C2}" IsReadOnly="True" Width="85"/>
+                            <DataGridTemplateColumn Width="45">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="✕"
+                                                Foreground="#DC2626"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                FontWeight="Bold"
+                                                Cursor="Hand"
+                                                Click="BtnQuitarItem_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
+                <!-- Pie de Carrito: Resumen de Ítems y Cancelar Venta -->
+                <Grid Grid.Row="3" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="TxtResumenItems"
+                               Grid.Column="0"
+                               Text="Ítems en carrito: 0  |  Unidades: 0"
+                               VerticalAlignment="Center"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="#475569"/>
+
+                    <Button x:Name="BtnCancelarVenta"
+                            Grid.Column="1"
+                            Content="🚫 Cancelar Venta (Esc)"
+                            Height="34"
+                            Padding="14,0"
+                            Background="#FEE2E2"
+                            Foreground="#B91C1C"
+                            FontWeight="SemiBold"
+                            BorderBrush="#FCA5A5"
+                            BorderThickness="1"
+                            Cursor="Hand"
+                            Click="BtnCancelarVenta_Click"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- Panel Derecho: Cliente, Comprobante SRI / Nota, Pago y Cobro -->
+        <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="16" BorderBrush="#E2E8F0" BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Facturación y Cobro" FontSize="17" FontWeight="Bold" Foreground="#0F172A" Margin="0,0,0,10"/>
+
+                    <!-- Cliente -->
+                    <TextBlock Text="Cliente (RUC / Cédula / Consumidor Final) [F6]" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="CmbClientes"
+                              Height="34"
+                              DisplayMemberPath="DisplayText"
+                              SelectionChanged="CmbClientes_SelectionChanged"/>
+
+                    <Border Background="#F8FAFC" CornerRadius="6" Padding="10" Margin="0,8,0,10" BorderBrush="#E2E8F0" BorderThickness="1">
+                        <StackPanel>
+                            <TextBlock x:Name="TxtClienteInfo" Text="RUC/CI: 9999999999999" FontSize="11.5" Foreground="#334155"/>
+                            <TextBlock x:Name="TxtClienteContacto" Text="Correo: consumidor@decorlim.local" FontSize="11" Foreground="#64748B" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Tipo de Comprobante -->
+                    <TextBlock Text="Tipo de Comprobante" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,4"/>
+                    <ComboBox x:Name="CmbTipoDocumento" Height="34" SelectedIndex="0" SelectionChanged="CmbTipoDocumento_SelectionChanged">
+                        <ComboBoxItem Content="Factura SRI (IVA 15%)" Tag="Factura"/>
+                        <ComboBoxItem Content="Nota de Venta" Tag="NotaVenta"/>
+                    </ComboBox>
+
+                    <!-- Método de Pago -->
+                    <TextBlock Text="Método de Pago" FontWeight="SemiBold" Foreground="#334155" Margin="0,10,0,4"/>
+                    <ComboBox x:Name="CmbMetodoPago" Height="34" SelectedIndex="0" SelectionChanged="CmbMetodoPago_SelectionChanged">
+                        <ComboBoxItem Content="Efectivo"/>
+                        <ComboBoxItem Content="Transferencia"/>
+                    </ComboBox>
+
+                    <!-- Cálculo de Vuelto (Efectivo) -->
+                    <Grid x:Name="PanelEfectivo" Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Recibido ($)" FontSize="11.5" FontWeight="SemiBold" Foreground="#334155"/>
+                            <TextBox x:Name="TxtMontoRecibido"
+                                     Height="30"
+                                     Padding="8,4"
+                                     Margin="0,3,0,0"
+                                     TextChanged="TxtMontoRecibido_TextChanged"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Vuelto / Cambio" FontSize="11.5" FontWeight="SemiBold" Foreground="#334155"/>
+                            <TextBlock x:Name="TxtCambio"
+                                       Text="$0.00"
+                                       FontSize="15"
+                                       FontWeight="Bold"
+                                       Foreground="#15803D"
+                                       VerticalAlignment="Center"
+                                       Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Referencia Transferencia -->
+                    <StackPanel x:Name="PanelReferencia" Visibility="Collapsed" Margin="0,8,0,0">
+                        <TextBlock Text="Referencia / Comprobante Bancario" FontSize="12" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,0,4"/>
+                        <TextBox x:Name="TxtReferenciaPago" Height="32" Padding="8,4"/>
+                    </StackPanel>
+
+                    <!-- Totales -->
+                    <Border Background="#0F172A" CornerRadius="8" Padding="14" Margin="0,14,0,12">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,4">
+                                <TextBlock Text="Subtotal:" Foreground="#CBD5E1"/>
+                                <TextBlock x:Name="TxtSubtotal" Text="$0.00" Foreground="White" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="IVA (15%):" Foreground="#CBD5E1"/>
+                                <TextBlock x:Name="TxtIva" Text="$0.00" Foreground="White" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Grid>
+                                <TextBlock Text="TOTAL:" Foreground="#93C5FD" FontSize="16" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtTotal" Text="$0.00" Foreground="#4ADE80" FontSize="20" FontWeight="Bold" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <CheckBox x:Name="ChkImprimirAutomatico"
+                              Content="Imprimir comprobante al cobrar"
+                              IsChecked="True"
+                              Margin="0,0,0,10"/>
+
+                    <Button x:Name="BtnCobrar"
+                            Content="💳 COBRAR EMITIR (F9)"
+                            Height="44"
+                            Background="#16A34A"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            FontSize="13.5"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="BtnCobrar_Click"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

@@ -11,6 +11,10 @@ namespace Decorlim.API.Models
         public int IdCliente { get; set; }
 
         [Required]
+        [Column("tipo_identificacion")]
+        public string TipoIdentificacion { get; set; } = "CEDULA";
+
+        [Required]
         [Column("identificacion")]
         public string Identificacion { get; set; } = string.Empty;
 
@@ -26,6 +30,9 @@ namespace Decorlim.API.Models
 
         [Column("telefono")]
         public string? Telefono { get; set; }
+
+        [Column("celular")]
+        public string? Celular { get; set; }
 
         [Required]
         [Column("tipo_cliente")]

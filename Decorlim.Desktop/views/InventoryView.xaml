@@ -1,0 +1,187 @@
+<UserControl x:Class="Decorlim.Desktop.Views.InventoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="#F8FAFC">
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.65*"/>
+            <ColumnDefinition Width="14"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Tabla de Inventario -->
+        <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="14" BorderBrush="#E2E8F0" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Inventario de Productos" FontSize="18" FontWeight="Bold" Foreground="#0F172A" VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button x:Name="BtnImportarExcel"
+                                Content="📥 Importar Excel"
+                                Height="32"
+                                Padding="10,0"
+                                Margin="0,0,8,0"
+                                Background="#0284C7"
+                                Foreground="White"
+                                FontWeight="SemiBold"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="BtnImportarExcel_Click"/>
+                        <Button x:Name="BtnExportarExcel"
+                                Content="📤 Exportar Excel"
+                                Height="32"
+                                Padding="10,0"
+                                Background="#0F766E"
+                                Foreground="White"
+                                FontWeight="SemiBold"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Click="BtnExportarExcel_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="1" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="TxtBuscar"
+                             Grid.Column="0"
+                             Height="34"
+                             Padding="10,5"
+                             TextChanged="TxtBuscar_TextChanged"/>
+
+                    <CheckBox x:Name="ChkIncluirInactivos"
+                              Grid.Column="2"
+                              Content="Ver inactivos"
+                              VerticalAlignment="Center"
+                              Checked="Filtro_Changed"
+                              Unchecked="Filtro_Changed"/>
+
+                    <Button Grid.Column="4"
+                            Content="🔄 Recargar"
+                            Height="34"
+                            Padding="12,0"
+                            Background="#E2E8F0"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="BtnRecargar_Click"/>
+                </Grid>
+
+                <DataGrid x:Name="GridInventario"
+                          Grid.Row="2"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          SelectionChanged="GridInventario_SelectionChanged"
+                          HeadersVisibility="Column"
+                          BorderBrush="#E2E8F0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Código" Binding="{Binding CodigoBarras}" Width="115"/>
+                        <DataGridTextColumn Header="Producto" Binding="{Binding Nombre}" Width="*"/>
+                        <DataGridTextColumn Header="Presentación" Binding="{Binding Presentacion}" Width="105"/>
+                        <DataGridTextColumn Header="Stock" Binding="{Binding StockActual}" Width="65"/>
+                        <DataGridTextColumn Header="PVP" Binding="{Binding PrecioMinorista, StringFormat=C2}" Width="75"/>
+                        <DataGridTextColumn Header="Mayorista" Binding="{Binding PrecioMayorista, StringFormat=C2}" Width="80"/>
+                        <DataGridCheckBoxColumn Header="Activo" Binding="{Binding Activo}" Width="55"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+
+        <!-- Formulario Crear / Editar (Solo Administrador) -->
+        <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="16" BorderBrush="#E2E8F0" BorderThickness="1">
+            <StackPanel>
+                <TextBlock x:Name="TxtTituloFormulario"
+                           Text="Detalle / Edición de Producto"
+                           FontSize="17"
+                           FontWeight="Bold"
+                           Foreground="#0F172A"
+                           Margin="0,0,0,12"/>
+
+                <TextBlock x:Name="TxtAvisoSoloLectura"
+                           Text="Modo consulta: solo el perfil Administrador puede crear o editar el inventario."
+                           Foreground="#B45309"
+                           FontSize="11.5"
+                           TextWrapping="Wrap"
+                           Visibility="Collapsed"
+                           Margin="0,0,0,10"/>
+
+                <StackPanel x:Name="PanelEdicion">
+                    <TextBlock Text="Código de Barras (vacío = autogenerar)" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                    <TextBox x:Name="TxtCodigo" Height="32" Padding="8,4" Margin="0,3,0,8"/>
+
+                    <TextBlock Text="Nombre del Producto *" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                    <TextBox x:Name="TxtNombre" Height="32" Padding="8,4" Margin="0,3,0,8"/>
+
+                    <TextBlock Text="Presentación (ej. Galón, 1/4 Galón, Unidad)" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                    <TextBox x:Name="TxtPresentacion" Height="32" Padding="8,4" Margin="0,3,0,8" Text="Galón"/>
+
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Precio Minorista ($)" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                            <TextBox x:Name="TxtPrecioMinorista" Height="32" Padding="8,4" Margin="0,3,0,0" Text="0.00"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Precio Mayorista ($)" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                            <TextBox x:Name="TxtPrecioMayorista" Height="32" Padding="8,4" Margin="0,3,0,0" Text="0.00"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Stock Actual" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                            <TextBox x:Name="TxtStock" Height="32" Padding="8,4" Margin="0,3,0,0" Text="0"/>
+                        </StackPanel>
+                        <CheckBox x:Name="ChkActivo" Grid.Column="2" Content="Producto Activo" IsChecked="True" VerticalAlignment="Bottom" Margin="0,0,0,6"/>
+                    </Grid>
+
+                    <Button x:Name="BtnNuevo"
+                            Content="➕ Nuevo Producto"
+                            Height="34"
+                            Margin="0,0,0,8"
+                            Background="#0284C7"
+                            Foreground="White"
+                            FontWeight="SemiBold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="BtnNuevo_Click"/>
+
+                    <Button x:Name="BtnGuardar"
+                            Content="💾 Guardar Cambios (Ctrl+S)"
+                            Height="40"
+                            Background="#16A34A"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            Click="BtnGuardar_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
